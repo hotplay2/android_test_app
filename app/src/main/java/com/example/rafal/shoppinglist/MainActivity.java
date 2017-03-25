@@ -1,10 +1,12 @@
 package com.example.rafal.shoppinglist;
 
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,11 +33,27 @@ public class MainActivity extends AppCompatActivity {
         myAdapter = new ShoppingListAdapter(shoppingList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         myRecyclerView.setLayoutManager(mLayoutManager);
-        myRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        myRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        RecyclerView.ItemAnimator itemAnimator = new DefaultItemAnimator();
+        itemAnimator.setAddDuration(1000);
+        itemAnimator.setRemoveDuration(1000);
+        myRecyclerView.setItemAnimator(itemAnimator);
         myRecyclerView.setAdapter(myAdapter);
+        myRecyclerView.addOnItemTouchListener(new CustomRVItemTouchListener(this, myRecyclerView, new RecyclerViewItemClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+
+                Log.d("TEST", shoppingList.get(position).getName());
+                showEditDialog(shoppingList.get(position));
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+                Log.d("TEST", shoppingList.get(position).getName());
+            }
+        }));
 
         prepareMovieData();
+
 
     }
 
@@ -52,6 +70,11 @@ public class MainActivity extends AppCompatActivity {
         myAdapter.notifyDataSetChanged();
     }
 
+    private void showEditDialog(Item item) {
+        FragmentManager fm = getSupportFragmentManager();
+        EditItemDialogFragment editNameDialogFragment = EditItemDialogFragment.newInstance(item);
+        editNameDialogFragment.show(fm, "asdfasdfasdfasdf");
+    }
 
 }
 

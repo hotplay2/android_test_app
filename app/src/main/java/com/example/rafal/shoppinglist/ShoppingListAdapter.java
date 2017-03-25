@@ -36,6 +36,10 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         return new MyViewHolder(itemView);
     }
 
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+    }
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
