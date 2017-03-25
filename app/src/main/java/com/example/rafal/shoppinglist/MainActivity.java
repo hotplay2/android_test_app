@@ -16,7 +16,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements EditItemDialogFragment.EditItemDialogListener {
     private RecyclerView myRecyclerView;
     private ShoppingListAdapter myAdapter;
     private RecyclerView.LayoutManager myLayoutManager;
@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view, int position) {
 
                 Log.d("TEST", shoppingList.get(position).getName());
-                showEditDialog(shoppingList.get(position));
+                showEditDialog(shoppingList.get(position), position);
             }
 
             @Override
@@ -70,10 +70,16 @@ public class MainActivity extends AppCompatActivity {
         myAdapter.notifyDataSetChanged();
     }
 
-    private void showEditDialog(Item item) {
+    private void showEditDialog(Item item, int position) {
         FragmentManager fm = getSupportFragmentManager();
-        EditItemDialogFragment editNameDialogFragment = EditItemDialogFragment.newInstance(item);
+        EditItemDialogFragment editNameDialogFragment = EditItemDialogFragment.newInstance(item, position);
         editNameDialogFragment.show(fm, "asdfasdfasdfasdf");
+    }
+
+    @Override
+    public void onFinishEditDialog(String inputText, int position) {
+        shoppingList.get(position).setName(inputText);
+        myAdapter.notifyItemChanged(position);
     }
 
 }
