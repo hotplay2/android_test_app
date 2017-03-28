@@ -1,5 +1,6 @@
 package com.example.rafal.shoppinglist;
 
+import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements EditItemDialogFra
     private RecyclerView myRecyclerView;
     private ShoppingListAdapter myAdapter;
     private RecyclerView.LayoutManager myLayoutManager;
+    DBHelper db;
 
     private List<Item> shoppingList = new ArrayList<>();
 
@@ -34,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements EditItemDialogFra
         setContentView(R.layout.activity_main);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+
+        db = new DBHelper(this);
 
         myRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
@@ -82,14 +86,25 @@ public class MainActivity extends AppCompatActivity implements EditItemDialogFra
     }
 
     private void prepareMovieData() {
-        Item item = new Item("proszek");
-        shoppingList.add(item);
+        List<Item> asd = db.getAllItems();
+        if (asd.size() <3){
+            db = new DBHelper(this);
 
-        item = new Item("pasta");
-        shoppingList.add(item);
+            Item item = new Item("proszek");
+            db.addItem(item);
 
-        item = new Item("woda");
-        shoppingList.add(item);
+            item = new Item("pasta");
+            db.addItem(item);
+
+            item = new Item("woda");
+            db.addItem(item);
+
+            asd = db.getAllItems();
+
+        }
+        for(int i=0; i<asd.size(); i++){
+            shoppingList.add(asd.get(i));
+        }
 
         myAdapter.notifyDataSetChanged();
     }
@@ -97,16 +112,18 @@ public class MainActivity extends AppCompatActivity implements EditItemDialogFra
     private void showEditDialog(Item item, int position) {
         FragmentManager fm = getSupportFragmentManager();
         EditItemDialogFragment editNameDialogFragment = EditItemDialogFragment.newInstance(item, position);
-        editNameDialogFragment.show(fm, "asdfasdfasdfasdf");
+        editNameDialogFragment.show(fm, "");
     }
 
     @Override
     public void onFinishEditDialog(String inputText, int position) {
         if (inputText.equals("")) {
             shoppingList.remove(position);
+            db.deleteItem(shoppingList.get(position));
         }
         else {
             shoppingList.get(position).setName(inputText);
+            db.updateItem(shoppingList.get(position));
             myAdapter.notifyItemChanged(position);
         }
 
@@ -125,7 +142,9 @@ public class MainActivity extends AppCompatActivity implements EditItemDialogFra
             case R.id.action_add_item:
                 addItem();
                 return true;
-
+            case R.id.action_settings:
+                Intent i = new Intent(this, PreferencesActivity.class);
+                startActivity(i);
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -134,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements EditItemDialogFra
     public void addItem(){
         Item item = new Item("");
         shoppingList.add(item);
+        db.addItem(item);
         int position = shoppingList.indexOf(item);
         showEditDialog(item, position);
     }

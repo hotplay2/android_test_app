@@ -6,6 +6,7 @@ package com.example.rafal.shoppinglist;
 
 public class Item {
     private String name;
+    private int id;
 
     public Item() {
     }
@@ -20,5 +21,13 @@ public class Item {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

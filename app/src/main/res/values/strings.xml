@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">ShoppingList</string>
+    <string name="action_settings">Preferences</string>
+    <string name="add_item">Add</string>
+    <string name="title_activity_preferences">PreferencesActivity</string>
+    <string name="colorpref">Color Preferences</string>
+
 </resources>
