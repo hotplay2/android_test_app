@@ -6,8 +6,12 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -23,10 +27,13 @@ public class MainActivity extends AppCompatActivity implements EditItemDialogFra
 
     private List<Item> shoppingList = new ArrayList<>();
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
 
         myRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
@@ -52,9 +59,26 @@ public class MainActivity extends AppCompatActivity implements EditItemDialogFra
             }
         }));
 
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(
+                ItemTouchHelper.UP | ItemTouchHelper.DOWN,
+                ItemTouchHelper.RIGHT) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+
+                myAdapter.onItemMove(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+                return true;
+            }
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                myAdapter.onItemDismiss(viewHolder.getAdapterPosition());
+                myAdapter.notifyDataSetChanged();
+            }
+        };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(myRecyclerView);
         prepareMovieData();
-
-
     }
 
     private void prepareMovieData() {
@@ -78,9 +102,40 @@ public class MainActivity extends AppCompatActivity implements EditItemDialogFra
 
     @Override
     public void onFinishEditDialog(String inputText, int position) {
-        shoppingList.get(position).setName(inputText);
-        myAdapter.notifyItemChanged(position);
+        if (inputText.equals("")) {
+            shoppingList.remove(position);
+        }
+        else {
+            shoppingList.get(position).setName(inputText);
+            myAdapter.notifyItemChanged(position);
+        }
+
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.add_item, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_add_item:
+                addItem();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void addItem(){
+        Item item = new Item("");
+        shoppingList.add(item);
+        int position = shoppingList.indexOf(item);
+        showEditDialog(item, position);
+    }
 }
 

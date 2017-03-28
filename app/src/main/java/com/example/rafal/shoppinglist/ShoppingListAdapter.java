@@ -5,16 +5,28 @@ package com.example.rafal.shoppinglist;
  */
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.Collections;
 import java.util.List;
 
 public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapter.MyViewHolder> {
 
     private List<Item> shoppingListItems;
+
+    public void onItemDismiss(int adapterPosition) {
+        shoppingListItems.remove(adapterPosition);
+    }
+
+    public boolean onItemMove(int fromPosition, int toPosition) {
+        Collections.swap(shoppingListItems, fromPosition, toPosition);
+        notifyItemMoved(fromPosition, toPosition);
+        return true;
+    }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView name;

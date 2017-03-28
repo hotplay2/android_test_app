@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -24,8 +25,16 @@ public class EditItemDialogFragment extends DialogFragment {
     private EditText mEditText;
     private Button editButton;
     private Button cancelButton;
+    private String itemText;
 
     public EditItemDialogFragment() {
+    }
+
+    public static EditItemDialogFragment newInstance() {
+        EditItemDialogFragment frag = new EditItemDialogFragment();
+        Bundle args = new Bundle();
+        frag.setArguments(args);
+        return frag;
     }
 
     public static EditItemDialogFragment newInstance(Item item, int position) {
@@ -41,7 +50,6 @@ public class EditItemDialogFragment extends DialogFragment {
         void onFinishEditDialog(String inputText, int position);
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -53,6 +61,7 @@ public class EditItemDialogFragment extends DialogFragment {
         super.onViewCreated(view, savedInstanceState);
 
         mEditText = (EditText) view.findViewById(R.id.txt_your_name);
+        itemText = mEditText.getText().toString();
         editButton = (Button) view.findViewById(R.id.enter);
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,7 +69,6 @@ public class EditItemDialogFragment extends DialogFragment {
                 EditItemDialogListener listener = (EditItemDialogListener) getActivity();
                 int position = getArguments().getInt("position");
                 listener.onFinishEditDialog(mEditText.getText().toString(), position);
-                // Close the dialog and return back to the parent activity
                 dismiss();
             }
         });
@@ -68,6 +76,13 @@ public class EditItemDialogFragment extends DialogFragment {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                EditItemDialogListener listener = (EditItemDialogListener) getActivity();
+                int position = getArguments().getInt("position");
+                String input = getArguments().getString("item");
+
+                if (input.equals("")) {
+                    listener.onFinishEditDialog(input, position);
+                }
                 dismiss();
             }
         });
