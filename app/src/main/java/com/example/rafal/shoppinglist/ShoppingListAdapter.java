@@ -20,6 +20,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 
     public void onItemDismiss(int adapterPosition) {
         shoppingListItems.remove(adapterPosition);
+
     }
 
     public boolean onItemMove(int fromPosition, int toPosition) {

@@ -15,7 +15,7 @@ import java.util.List;
  */
 
 public class DBHelper extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 8;
     private static final String DATABASE_NAME = "ShoppingList";
     private static final String TABLE_NAME = "ShoppingList";
 
@@ -105,7 +105,7 @@ public class DBHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put("name", item.getName());
 
-        int i = db.update("ShoppingList",
+        int i = db.update(TABLE_NAME,
                 values,
                 "id"+" = ?",
                 new String[] { String.valueOf(item.getId()) });
@@ -118,11 +118,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
-        db.delete("ShoppingList",
+        db.delete(TABLE_NAME,
                 "id = ?",
                 new String[] { String.valueOf(item.getId()) });
-
-
         db.close();
 
 

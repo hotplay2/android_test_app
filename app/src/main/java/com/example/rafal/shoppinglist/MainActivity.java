@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements EditItemDialogFra
             }
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                db.deleteItem(shoppingList.get(viewHolder.getAdapterPosition()));
                 myAdapter.onItemDismiss(viewHolder.getAdapterPosition());
                 myAdapter.notifyDataSetChanged();
             }
@@ -126,12 +127,10 @@ public class MainActivity extends AppCompatActivity implements EditItemDialogFra
             db.updateItem(shoppingList.get(position));
             myAdapter.notifyItemChanged(position);
         }
-
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.add_item, menu);
         return true;
     }
@@ -152,6 +151,7 @@ public class MainActivity extends AppCompatActivity implements EditItemDialogFra
 
     public void addItem(){
         Item item = new Item("");
+        item.setId(shoppingList.size()+1);
         shoppingList.add(item);
         db.addItem(item);
         int position = shoppingList.indexOf(item);
